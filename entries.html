@@ -63,6 +63,7 @@
     
       
     <h1>Your Past Journal Entries</h1>
+    <button onclick="exportCSV()">📄 Export as CSV</button>
     <div id="entries"></div>
 
     <script>
@@ -114,6 +115,29 @@
     });
   }
     </script>
+    <script>
+        function exportCSV() {
+            const journal = JSON.parse(localStorage.getItem('journal')) || [];
+
+            if (journal.length === 0) {
+                alert("No entries to export.");
+                return;
+            }
+
+            const header = "Date,Emotion,Entry\n";
+            const rows = journal.map(entry =>
+                `"${entry.date}","${entry.emotion}","${entry.entry.replace(/"/g, '""')}"`).join("\n");
+
+            const csvContent = header + rows;
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "my-journal.csv";
+            link.click();
+        }
+    </script>      
 
 </body>
 
