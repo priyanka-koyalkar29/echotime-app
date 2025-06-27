@@ -91,30 +91,40 @@
 
   <label for="entry">Write your thoughts:</label>
   <textarea id="entry" rows="6" placeholder="Type here..."></textarea>
-
-  <button onclick="saveEntry()">💾 Save</button>
+<label for="secret">Secret Key (for encryption):</label>
+<input type="password" id="secret" placeholder="Type your secret key">
+ <button onclick="saveEntry()">💾 Save</button>
 
   <script>
-    function saveEntry() {
-        const emotion = document.getElementById('emotion').value;
+        function saveEntry() {
+    const emotion = document.getElementById('emotion').value;
         const entry = document.getElementById('entry').value;
+        const key = document.getElementById('secret').value;
         const date = new Date().toLocaleString();
 
-        const data = { emotion, entry, date };
+        if (!key) {
+            alert("Please enter your secret key to encrypt.");
+        return;
+    }
+
+        // Encrypt entry
+        const encrypted = btoa(unescape(encodeURIComponent(entry + "::" + key)));
+
+        const data = {
+            emotion,
+            entry: encrypted,
+        date
+    };
 
         let journal = JSON.parse(localStorage.getItem('journal')) || [];
         journal.push(data);
         localStorage.setItem('journal', JSON.stringify(journal));
 
-        alert('Your entry has been saved!');
+        alert("Encrypted & saved!");
         document.getElementById('entry').value = '';
-    }
-
-    function logout() {
-        localStorage.removeItem("loggedIn");
-        window.location.href = "login.html";
-    }
+  }
 </script>
+
 </body>
 
 </html>
