@@ -3,8 +3,25 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>EchoTime Journal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EchoTime Journal</title>
   <style>
+    @media (max-width: 600px) {
+  body {
+    padding: 20px;
+  }
+
+  button, input, select, textarea {
+    width: 100%;
+    font-size: 1.1rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+}
+
     body {
       font-family: sans-serif;
       padding: 40px;
@@ -57,7 +74,7 @@
   </div>
 
   <h1>How are you feeling today?</h1>
-  
+
 <button onclick="window.location.href='analytics.html'">
     📊 View Mood Analytics
 </button>
