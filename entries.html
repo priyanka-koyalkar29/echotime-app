@@ -115,29 +115,50 @@
     });
   }
     </script>
-    <script>
-        function exportCSV() {
-            const journal = JSON.parse(localStorage.getItem('journal')) || [];
-
-            if (journal.length === 0) {
-                alert("No entries to export.");
-                return;
+   <script>
+    function decodeEntry(encrypted, key) {
+        try {
+            const decoded = decodeURIComponent(escape(atob(encrypted)));
+            if (decoded.endsWith("::" + key)) {
+                return decoded.split("::")[0];
+            } else {
+                return "🔒 Encrypted - wrong key";
             }
-
-            const header = "Date,Emotion,Entry\n";
-            const rows = journal.map(entry =>
-                `"${entry.date}","${entry.emotion}","${entry.entry.replace(/"/g, '""')}"`).join("\n");
-
-            const csvContent = header + rows;
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "my-journal.csv";
-            link.click();
+        } catch (e) {
+            return "⚠️ Invalid data";
         }
-    </script>      
+    }
+
+    function exportCSV() {
+        const journal = JSON.parse(localStorage.getItem('journal')) || [];
+        if (journal.length === 0) {
+            alert("No entries to export.");
+            return;
+        }
+
+        const key = prompt("Enter your secret key to decrypt entries:");
+        if (!key) {
+            alert("Export cancelled: No key provided.");
+            return;
+        }
+
+        const header = "Date,Emotion,Entry\n";
+        const rows = journal.map(entry => {
+            const decrypted = decodeEntry(entry.entry, key);
+            return `"${entry.date}","${entry.emotion}","${decrypted.replace(/"/g, '""')}"`;
+        }).join("\n");
+
+        const csvContent = header + rows;
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "my-journal.csv";
+        link.click();
+    }
+</script>
+
 
 </body>
 
