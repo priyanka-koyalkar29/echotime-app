@@ -113,6 +113,8 @@
 
     <!-- Chart display -->
     <canvas id="emotionChart" width="400" height="400"></canvas>
+    <button onclick="downloadChart()">📥 Download Mood Report</button>
+
 
     <!-- Mood summary -->
     <div class="stats" id="stats"></div>
@@ -190,7 +192,20 @@
 
         // Load chart on page load
         updateChart();
+        // Download chart as image 
+        function downloadChart() {
+                const chart = document.getElementById("moodChart");
+                html2canvas(chart).then(canvas => {
+                    const link = document.createElement("a");
+                    link.download = "mood-report.png";
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            }
+
     </script>
+    <!-- Download Chart Script -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 
 </html>
