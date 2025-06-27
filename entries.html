@@ -57,29 +57,64 @@
             window.location.href = "login.html"; // 🔐 block access
         }
     </script>
+    <label for="decryptKey">Enter your secret key to unlock entries:</label>
+    <input type="password" id="decryptKey" placeholder="Secret key" />
+    <button onclick="showEntries()">🔓 Unlock Entries</button>
+    
       
     <h1>Your Past Journal Entries</h1>
     <div id="entries"></div>
 
     <script>
-        const container = document.getElementById('entries');
-        const journal = JSON.parse(localStorage.getItem('journal')) || [];
+            if (localStorage.getItem("loggedIn") !== "true") {
+                window.location.href = "login.html"; // block access
+  }
 
-        if (journal.length === 0) {
-            container.innerHTML = "<p>No entries yet. Go write your first one!</p>";
-        } else {
-            journal.reverse().forEach(entry => {
-                const div = document.createElement('div');
-                div.className = 'entry';
-                div.innerHTML = `
-          <div class="date">${entry.date}</div>
-          <div class="emotion">${entry.emotion}</div>
-          <p>${entry.entry}</p>
-        `;
-                container.appendChild(div);
-            });
-        }
+            function decodeEntry(encrypted, key) {
+    try {
+      const decoded = decodeURIComponent(escape(atob(encrypted)));
+            if (decoded.endsWith("::" + key)) {
+        return decoded.split("::")[0];
+      } else {
+        return "🔒 Encrypted - wrong key";
+      }
+    } catch (e) {
+      return "⚠️ Invalid data";
+    }
+  }
+
+            function showEntries() {
+    const key = document.getElementById('decryptKey').value;
+            const container = document.getElementById('entries');
+            container.innerHTML = '';
+
+            if (!key) {
+                alert("Please enter the secret key");
+            return;
+    }
+
+            const journal = JSON.parse(localStorage.getItem('journal')) || [];
+
+            if (journal.length === 0) {
+                container.innerHTML = "<p>No entries yet. Go write your first one!</p>";
+            return;
+    }
+
+    journal.reverse().forEach(entry => {
+      const div = document.createElement('div');
+            div.className = 'entry';
+            const decryptedText = decodeEntry(entry.entry, key);
+
+            div.innerHTML = `
+            <div class="date">${entry.date}</div>
+            <div class="emotion">${entry.emotion}</div>
+            <p>${decryptedText}</p>
+      `;
+      container.appendChild(div);
+    });
+  }
     </script>
+
 </body>
 
 </html>
