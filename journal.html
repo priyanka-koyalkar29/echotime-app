@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>EchoTime Journal</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 40px;
+      background-color: #f5f5fa;
+    }
+
+    h1 {
+      color: #4f46e5;
+    }
+
+    label,
+    select,
+    textarea,
+    button {
+      display: block;
+      margin-top: 20px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    button {
+      background-color: #4f46e5;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .top-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 🔐 Block access if not logged in -->
+  <script>
+    if (localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "login.html";
+    }
+</script>
+
+  <div class="top-buttons">
+    <button onclick="window.location.href='entries.html'">📖 View Past Entries</button>
+    <button onclick="logout()">🔓 Logout</button>
+  </div>
+
+  <h1>How are you feeling today?</h1>
+
+  <label for="emotion">Choose Emotion:</label>
+  <select id="emotion">
+    <option>😊 Happy</option>
+    <option>😔 Sad</option>
+    <option>😡 Angry</option>
+    <option>😨 Anxious</option>
+    <option>🤔 Confused</option>
+  </select>
+
+  <label for="entry">Write your thoughts:</label>
+  <textarea id="entry" rows="6" placeholder="Type here..."></textarea>
+
+  <button onclick="saveEntry()">💾 Save</button>
+
+  <script>
+    function saveEntry() {
+        const emotion = document.getElementById('emotion').value;
+        const entry = document.getElementById('entry').value;
+        const date = new Date().toLocaleString();
+
+        const data = { emotion, entry, date };
+
+        let journal = JSON.parse(localStorage.getItem('journal')) || [];
+        journal.push(data);
+        localStorage.setItem('journal', JSON.stringify(journal));
+
+        alert('Your entry has been saved!');
+        document.getElementById('entry').value = '';
+    }
+
+    function logout() {
+        localStorage.removeItem("loggedIn");
+        window.location.href = "login.html";
+    }
+</script>
+</body>
+
+</html>
+
