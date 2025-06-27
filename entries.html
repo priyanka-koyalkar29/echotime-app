@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>EchoTime Entries</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 40px;
+            background-color: #f0f4ff;
+        }
+
+        h1 {
+            color: #4f46e5;
+        }
+
+        .entry {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .date {
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .emotion {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        if (localStorage.getItem("loggedIn") !== "true") {
+            window.location.href = "login.html"; // 🔐 block access
+        }
+    </script>
+      
+    <h1>Your Past Journal Entries</h1>
+    <div id="entries"></div>
+
+    <script>
+        const container = document.getElementById('entries');
+        const journal = JSON.parse(localStorage.getItem('journal')) || [];
+
+        if (journal.length === 0) {
+            container.innerHTML = "<p>No entries yet. Go write your first one!</p>";
+        } else {
+            journal.reverse().forEach(entry => {
+                const div = document.createElement('div');
+                div.className = 'entry';
+                div.innerHTML = `
+          <div class="date">${entry.date}</div>
+          <div class="emotion">${entry.emotion}</div>
+          <p>${entry.entry}</p>
+        `;
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+
+</html>

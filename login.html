@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>EchoTime Login</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f9f9fc;
+        }
+
+        h1 {
+            color: #4f46e5;
+        }
+
+        input {
+            padding: 10px;
+            margin: 15px;
+            width: 250px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔐 EchoTime Login</h1>
+    <input type="password" id="password" placeholder="Enter your secret password" />
+    <button onclick="login()">Unlock</button>
+    <div class="error" id="error"></div>
+
+    <script>
+                function login() {
+        const password = document.getElementById('password').value;
+                const errorDiv = document.getElementById('error');
+
+                const secret = "myechopass";
+
+                if (password === secret) {
+                    localStorage.setItem("loggedIn", "true"); // ✅ Set login flag
+                window.location.href = "journal.html";
+        } else {
+                    errorDiv.textContent = "Incorrect password. Try again!";
+        }
+    }
+     </script>
+
+
+</body>
+
+</html>
