@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>EchoTime Analytics</title>
+    <!-- Load Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 40px;
+            background-color: #f0f4ff;
+        }
+
+        h1 {
+            color: #4f46e5;
+        }
+
+        .stats {
+            margin-top: 30px;
+        }
+
+        .emotion-count {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            margin-right: 10px;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 1rem;
+            margin: 0 10px 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 🔐 Block access if not logged in -->
+    <script>
+        if (localStorage.getItem("loggedIn") !== "true") {
+            window.location.href = "login.html";
+        }
+    </script>
+
+    <!-- Navigation buttons -->
+    <button onclick="window.location.href='journal.html'">⬅️ Back to Journal</button>
+    <button onclick="logout()">🔓 Logout</button>
+
+    <h1>📊 Your Mood Analytics</h1>
+
+    <!-- Filters -->
+    <div>
+        <label>Filter by Emotion:</label>
+        <select id="filterEmotion">
+            <option value="">All</option>
+            <option>😊 Happy</option>
+            <option>😔 Sad</option>
+            <option>😡 Angry</option>
+            <option>😨 Anxious</option>
+            <option>🤔 Confused</option>
+        </select>
+
+        <label>Filter by Month:</label>
+        <select id="filterMonth">
+            <option value="">All</option>
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+        </select>
+
+        <button onclick="updateChart()">Apply Filters</button>
+    </div>
+
+    <!-- Chart display -->
+    <canvas id="emotionChart" width="400" height="400"></canvas>
+
+    <!-- Mood summary -->
+    <div class="stats" id="stats"></div>
+
+    <script>
+        let chart;
+
+        function logout() {
+            localStorage.removeItem("loggedIn");
+            window.location.href = "login.html";
+        }
+
+        function updateChart() {
+            const journal = JSON.parse(localStorage.getItem('journal')) || [];
+            const emotionFilter = document.getElementById('filterEmotion').value;
+            const monthFilter = document.getElementById('filterMonth').value;
+
+            let filtered = journal;
+
+            if (emotionFilter) {
+                filtered = filtered.filter(entry => entry.emotion === emotionFilter);
+            }
+
+            if (monthFilter) {
+                filtered = filtered.filter(entry => {
+                    const month = new Date(entry.date).toLocaleString('en-US', { month: '2-digit' });
+                    return month === monthFilter;
+                });
+            }
+
+            const emotionMap = {};
+            filtered.forEach(entry => {
+                const emo = entry.emotion;
+                emotionMap[emo] = (emotionMap[emo] || 0) + 1;
+            });
+
+            const labels = Object.keys(emotionMap);
+            const data = Object.values(emotionMap);
+
+            const colors = ['#f59e0b', '#ef4444', '#10b981', '#6366f1', '#ec4899'];
+
+            if (chart) chart.destroy();
+
+            const ctx = document.getElementById('emotionChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Emotions',
+                        data: data,
+                        backgroundColor: colors.slice(0, labels.length)
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: true, text: 'Your Emotional Distribution' }
+                    }
+                }
+            });
+
+            const statsDiv = document.getElementById('stats');
+            statsDiv.innerHTML = "";
+
+            if (filtered.length === 0) {
+                statsDiv.innerHTML = "<p>No entries match your filters.</p>";
+            } else {
+                const [topEmotion] = Object.entries(emotionMap).sort((a, b) => b[1] - a[1])[0];
+                const summary = document.createElement('h2');
+                summary.textContent = `✨ You mostly felt ${topEmotion}`;
+                statsDiv.prepend(summary);
+            }
+        }
+
+        // Load chart on page load
+        updateChart();
+    </script>
+</body>
+
+</html>
+
+  
