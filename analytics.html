@@ -190,21 +190,27 @@
 
         // Load chart on page load
         updateChart();
-        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-        
-        <script>
-            function downloadChart() {
-            const chart = document.getElementById("moodChart");
-            html2canvas(chart).then(canvas => {
-              const link = document.createElement("a");
+    </script>
+
+<!-- ✅ Load html2canvas library (placed OUTSIDE) -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<!-- ✅ Download chart logic -->
+<script>
+    function downloadChart() {
+        const chart = document.getElementById("emotionChart"); // ✅ correct ID
+        html2canvas(chart).then(canvas => {
+            const link = document.createElement("a");
             link.download = "mood-report.png";
             link.href = canvas.toDataURL("image/png");
             link.click();
-            });
-          }
-        </script>
+        });
+    }
+</script>
 </body>
-
 </html>
 
+
+        
+            
   
